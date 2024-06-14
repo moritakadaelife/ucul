@@ -1,7 +1,9 @@
-import { Inter as FontSans } from "next/font/google"
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 
 export default function Home() {
   return (
@@ -11,9 +13,9 @@ export default function Home() {
         <main className="ucul-main">
           <section className="ucul-section__upload-file">
             <h2 className="ucul-section__upload-file-title">検閲データ</h2>
-            {/* <Label className="ucul-section__upload-file-label">
-              <Input id="picture" type="file" accept=".csv" multiple className="ucul-section__upload-file-input" onChange={handleFileUpload}></Input>
-            </Label> */}
+            <Label className="ucul-section__upload-file-label">
+              <Input id="picture" type="file" accept=".csv" multiple className="ucul-section__upload-file-input"></Input>
+            </Label>
           </section>
           <section className="ucul-section__lists">
             <table className="ucul-section__lists-table">
@@ -28,14 +30,14 @@ export default function Home() {
                   <td>
                     <div className="ucul-section__lists-table-cell-aligner">
                       <span>test.csv</span>
-                      <button>Delete</button>
+                      <Button>Delete</Button>
                     </div>
                   </td>
                   <td>
                     <div className="ucul-section__lists-table-cell-aligner">
                       <span>test.csv</span>
-                      <button>Download</button>
-                      <button>Delete</button>
+                      <Button>Download</Button>
+                      <Button>Delete</Button>
                     </div>
                   </td>
                 </tr>
