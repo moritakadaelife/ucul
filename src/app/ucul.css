@@ -1,0 +1,127 @@
+:root {
+  --ucul-gap--d: 30px;
+
+  --font-size-xl: 40px;
+  --font-size-l: 30px;
+  --font-size-m: 20px;
+  --font-size-s: 16px;
+  --font-size-xs: 14px;
+}
+
+.loading span {
+  animation: blink 100ms infinite;
+}
+
+.loading span:nth-of-type(1) {
+  animation-delay: 0s;
+}
+
+.loading span:nth-of-type(2) {
+  animation-delay: 0.25s;
+}
+
+.loading span:nth-of-type(3) {
+  animation-delay: 0.5s;
+}
+
+.ucul {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.ucul-header {
+  padding: var(--ucul-gap--d);
+  background-color: rgb(220, 220, 220);
+}
+
+.ucul-header h1 {
+  font-size: var(--font-size-m);
+}
+
+.ucul-footer {
+  margin-top: auto;
+  padding: var(--ucul-gap--d);
+  text-align: center;
+  background-color: rgb(220, 220, 220);
+}
+
+.ucul-main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.ucul-main h2 {
+  font-size: var(--font-size-s);
+  font-weight: 600;
+}
+
+.ucul-section__upload-file {
+  padding: var(--ucul-gap--d);
+  flex: 0 0 100%;
+  text-align: center;
+  background-color: rgb(240, 240, 240);
+}
+
+.ucul-section__upload-file-label {
+  margin: auto;
+  display: block;
+}
+
+.ucul-section__upload-file-input {
+  margin: auto;
+  width: 400px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.ucul-section__lists {
+  width: 100%;
+}
+
+.ucul-section__lists-table {
+  width: 100%;
+}
+
+.ucul-section__lists-table th {
+  padding-top: calc(var(--ucul-gap--d) / 2);
+  padding-right: var(--ucul-gap--d);
+  padding-bottom: calc(var(--ucul-gap--d) / 2);
+  padding-left: var(--ucul-gap--d);
+  border-bottom: 1px solid rgb(240, 240, 240);
+  width: 50%;
+}
+
+.ucul-section__lists-table td {
+  padding-top: calc(var(--ucul-gap--d) / 4);
+  padding-right: var(--ucul-gap--d);
+  padding-bottom: calc(var(--ucul-gap--d) / 4);
+  padding-left: var(--ucul-gap--d);
+  border-bottom: 1px solid rgb(240, 240, 240);
+  width: 50%;
+}
+
+.ucul-section__lists-table tr th:nth-child(1),
+.ucul-section__lists-table tr td:nth-child(1) {
+  padding-right: calc(var(--ucul-gap--d) / 2);
+}
+
+.ucul-section__lists-table tr th:nth-child(2),
+.ucul-section__lists-table tr td:nth-child(2) {
+  padding-left: calc(var(--ucul-gap--d) / 2);
+}
+
+.ucul-section__lists-table span {
+  margin-right: auto;
+}
+
+.ucul-section__lists-table button {
+  margin-left: calc(var(--ucul-gap--d) / 2);
+}
+
+.ucul-section__lists-table-cell-aligner {
+  display: flex;
+  align-items: center;
+}
+
