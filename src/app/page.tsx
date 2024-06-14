@@ -10,12 +10,14 @@ import Footer from "@/app/components/Footer";
 export default function Home() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
-  const handleFileUpload = async (e: any) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const handleFileUpload = async (e) => {
+    const files = e.target.files;
+    if (!files.length) return;
 
     const formData = new FormData();
-    formData.append("file", file);
+    Array.from(files).forEach((file) => {
+      formData.append("files", file);
+    });
 
     const response = await fetch("http://localhost:3001/upload", {
       method: "POST",
@@ -27,14 +29,14 @@ export default function Home() {
     if (response.ok) {
       setUploadedFiles((prev) => [
         ...prev,
-        { filename: data.filename, originalname: data.filename },
+        ...data.files.map((file) => ({ filename: file.filename, originalname: file.originalname })),
       ]);
     } else {
       console.error(data.message);
     }
   };
 
-  const handleDeleteFile = async (filename: any) => {
+  const handleDeleteFile = async (filename) => {
     const response = await fetch(`http://localhost:3001/delete/${filename}`, {
       method: "DELETE",
     });

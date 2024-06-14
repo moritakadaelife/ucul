@@ -20,13 +20,19 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.post('/upload', upload.single('file'), (req, res) => {
-  const file = req.file;
-  if (!file) {
-    return res.status(400).send('No file uploaded.');
+app.post('/upload', upload.array('files', 10), (req, res) => {
+  const files = req.files;
+  if (!files || files.length === 0) {
+    return res.status(400).send({ message: 'No files uploaded.' });
   }
 
-  res.status(200).send({ message: 'File uploaded successfully', filename: file.filename });
+  res.status(200).send({
+    message: 'Files uploaded successfully',
+    files: files.map((file) => ({
+      filename: file.filename,
+      originalname: file.originalname,
+    })),
+  });
 });
 
 app.delete('/delete/:filename', (req, res) => {
