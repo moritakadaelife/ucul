@@ -8,10 +8,9 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 
 export default function Home() {
-  const [files, setFiles] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = async (e: any) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -28,15 +27,23 @@ export default function Home() {
     if (response.ok) {
       setUploadedFiles((prev) => [
         ...prev,
-        { filename: data.filename, originalname: data.originalname },
+        { filename: data.filename, originalname: data.filename },
       ]);
     } else {
       console.error(data.message);
     }
   };
 
-  const handleDeleteFile = (filename) => {
-    setUploadedFiles((prev) => prev.filter((file) => file.filename !== filename));
+  const handleDeleteFile = async (filename: any) => {
+    const response = await fetch(`http://localhost:3001/delete/${filename}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      setUploadedFiles((prev) => prev.filter((file) => file.filename !== filename));
+    } else {
+      console.error("Failed to delete file");
+    }
   };
 
   return (

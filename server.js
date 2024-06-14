@@ -1,39 +1,52 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
+const cors = require('cors');
 const fs = require('fs');
-
+const path = require('path');
 const app = express();
-const PORT = 3001;
+const port = 3001;
 
-const upload = multer({ dest: 'uploads/' });
+app.use(cors());
+app.use(express.static('uploads'));
 
-app.use(express.static(path.join(__dirname, 'uploads')));
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 app.post('/upload', upload.single('file'), (req, res) => {
   const file = req.file;
   if (!file) {
-    return res.status(400).send({ message: 'Please upload a file.' });
+    return res.status(400).send('No file uploaded.');
   }
 
-  res.status(200).send({
-    message: 'File uploaded successfully.',
-    filename: file.filename,
-    originalname: file.originalname,
+  res.status(200).send({ message: 'File uploaded successfully', filename: file.filename });
+});
+
+app.delete('/delete/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'uploads', filename);
+
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      return res.status(500).send({ message: 'Failed to delete file' });
+    }
+    res.status(200).send({ message: 'File deleted successfully' });
   });
 });
 
 app.get('/download/:filename', (req, res) => {
   const filename = req.params.filename;
-  const filepath = path.join(__dirname, 'uploads', filename);
-
-  if (fs.existsSync(filepath)) {
-    res.download(filepath, filename);
-  } else {
-    res.status(404).send({ message: 'File not found.' });
-  }
+  const filePath = path.join(__dirname, 'uploads', filename);
+  res.download(filePath);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
