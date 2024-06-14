@@ -1,11 +1,44 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 
 export default function Home() {
+  const [files, setFiles] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("http://localhost:3001/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setUploadedFiles((prev) => [
+        ...prev,
+        { filename: data.filename, originalname: data.originalname },
+      ]);
+    } else {
+      console.error(data.message);
+    }
+  };
+
+  const handleDeleteFile = (filename) => {
+    setUploadedFiles((prev) => prev.filter((file) => file.filename !== filename));
+  };
+
   return (
     <>
       <div className="ucul">
@@ -14,7 +47,7 @@ export default function Home() {
           <section className="ucul-section__upload-file">
             <h2 className="ucul-section__upload-file-title">検閲データ</h2>
             <Label className="ucul-section__upload-file-label">
-              <Input id="picture" type="file" accept=".csv" multiple className="ucul-section__upload-file-input"></Input>
+              <Input id="picture" type="file" accept=".csv" multiple className="ucul-section__upload-file-input" onChange={handleFileUpload} />
             </Label>
           </section>
           <section className="ucul-section__lists">
@@ -26,46 +59,23 @@ export default function Home() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>
-                    <div className="ucul-section__lists-table-cell-aligner">
-                      <span>test.csv</span>
-                      <Button>Delete</Button>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="ucul-section__lists-table-cell-aligner">
-                      <span>test.csv</span>
-                      <Button>Download</Button>
-                      <Button>Delete</Button>
-                    </div>
-                  </td>
-                </tr>
-                {/* {files.map((file, index) => (
+                {uploadedFiles.map((file, index) => (
                   <tr key={index}>
                     <td>
                       <div className="ucul-section__lists-table-cell-aligner">
-                        <span>{file.name}</span>
-                        <Button onClick={() => handleDeleteFile(file.name)}>Delete</Button>
+                        <span>{file.originalname}</span>
+                        <Button onClick={() => handleDeleteFile(file.filename)}>Delete</Button>
                       </div>
                     </td>
                     <td>
                       <div className="ucul-section__lists-table-cell-aligner">
-                        <span>{file.name}</span>
-                        {file.status === 'completed' ? (
-                          <>
-                            <Button as="a" href={file.downloadLink} download={file.name}>
-                              Download
-                            </Button>
-                          </>
-                        ) : (
-                          <Button disabled>Download</Button>
-                        )}
-                        <Button onClick={() => handleDeleteFile(file.name)}>Delete</Button>
+                        <span>{file.originalname}</span>
+                        <Button onClick={() => window.location.href = `http://localhost:3001/download/${file.filename}`}>Download</Button>
+                        <Button onClick={() => handleDeleteFile(file.filename)}>Delete</Button>
                       </div>
                     </td>
                   </tr>
-                ))} */}
+                ))}
               </tbody>
             </table>
           </section>

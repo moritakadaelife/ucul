@@ -4,3 +4,7 @@ node_modules
 
 # misc
 .DS_Store
+src/directory_map.txt
+
+# local server
+uploads
