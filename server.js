@@ -14,11 +14,14 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
+    const uniqueName = Date.now() + '-' + file.originalname;
+    cb(null, uniqueName);
   },
 });
 
 const upload = multer({ storage: storage });
+
+const fileStatus = {};
 
 app.post('/upload', upload.array('files', 10), (req, res) => {
   const files = req.files;
@@ -26,7 +29,15 @@ app.post('/upload', upload.array('files', 10), (req, res) => {
     return res.status(400).send({ message: 'No files uploaded.' });
   }
 
-  res.status(200).send({
+  files.forEach((file) => {
+    fileStatus[file.filename] = { status: 'processing', originalname: file.originalname };
+    // Simulate AI processing
+    setTimeout(() => {
+      fileStatus[file.filename].status = 'completed';
+    }, 1000); // 10 seconds delay to simulate processing
+  });
+
+  res.status(200).json({
     message: 'Files uploaded successfully',
     files: files.map((file) => ({
       filename: file.filename,
@@ -35,16 +46,13 @@ app.post('/upload', upload.array('files', 10), (req, res) => {
   });
 });
 
-app.delete('/delete/:filename', (req, res) => {
+app.get('/status/:filename', (req, res) => {
   const filename = req.params.filename;
-  const filePath = path.join(__dirname, 'uploads', filename);
-
-  fs.unlink(filePath, (err) => {
-    if (err) {
-      return res.status(500).send({ message: 'Failed to delete file' });
-    }
-    res.status(200).send({ message: 'File deleted successfully' });
-  });
+  const status = fileStatus[filename];
+  if (!status) {
+    return res.status(404).json({ message: 'File not found' });
+  }
+  res.status(200).json(status);
 });
 
 app.get('/download/:filename', (req, res) => {
