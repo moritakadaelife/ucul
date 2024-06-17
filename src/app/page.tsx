@@ -28,7 +28,7 @@ export default function Home() {
     });
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upload`, {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/upload", {
         method: "POST",
         body: formData,
       });
@@ -65,7 +65,7 @@ export default function Home() {
     for (const filename of filenames) {
       const interval = setInterval(async () => {
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/status/${filename}`);
+          const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/status/${filename}`);
           if (response.ok) {
             const data = await response.json();
             if (data.status === "completed") {
@@ -133,7 +133,7 @@ export default function Home() {
                         <span>{file.originalname}</span>
                         <Button
                           onClick={() =>
-                            (window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/download/${file.filename}`)
+                            (window.location.href = process.env.NEXT_PUBLIC_API_URL + `/download/${file.filename}`)
                           }
                           disabled={file.status !== "completed"}
                         >
