@@ -1,66 +1,67 @@
 const express = require('express');
-const multer = require('multer');
-const cors = require('cors');
+const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
+require('dotenv').config();
+
 const app = express();
-const port = 3001;
+const uploadDir = './uploads';
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
 app.use(cors());
-app.use(express.static('uploads'));
+app.use(fileUpload());
+app.use(express.static(uploadDir));
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = Date.now() + '-' + file.originalname;
-    cb(null, uniqueName);
-  },
+app.use((req, res, next) => {
+  const apiKey = req.headers['api-key'];
+  if (apiKey === process.env.API_KEY) {
+    next();
+  } else {
+    res.status(401).send('Unauthorized');
+  }
 });
 
-const upload = multer({ storage: storage });
-
-const fileStatus = {};
-
-app.post('/upload', upload.array('files', 10), (req, res) => {
-  const files = req.files;
-  if (!files || files.length === 0) {
-    return res.status(400).send({ message: 'No files uploaded.' });
+app.post('/upload', (req, res) => {
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send('No files were uploaded.');
   }
 
-  files.forEach((file) => {
-    fileStatus[file.filename] = { status: 'processing', originalname: file.originalname };
-    // Simulate AI processing
-    setTimeout(() => {
-      fileStatus[file.filename].status = 'completed';
-    }, 1000); // 10 seconds delay to simulate processing
-  });
+  let uploadedFiles = [];
 
-  res.status(200).json({
-    message: 'Files uploaded successfully',
-    files: files.map((file) => ({
-      filename: file.filename,
-      originalname: file.originalname,
-    })),
-  });
+  for (let fileKey in req.files) {
+    let file = req.files[fileKey];
+    let uploadPath = path.join(uploadDir, file.name);
+    file.mv(uploadPath, (err) => {
+      if (err) return res.status(500).send(err);
+      uploadedFiles.push({ filename: file.name, originalname: file.name });
+    });
+  }
+
+  res.json({ files: uploadedFiles });
 });
 
 app.get('/status/:filename', (req, res) => {
-  const filename = req.params.filename;
-  const status = fileStatus[filename];
-  if (!status) {
-    return res.status(404).json({ message: 'File not found' });
+  const { filename } = req.params;
+  const filePath = path.join(uploadDir, filename);
+
+  if (fs.existsSync(filePath)) {
+    res.json({ status: 'completed' });
+  } else {
+    res.status(404).send('File not found');
   }
-  res.status(200).json(status);
 });
 
 app.get('/download/:filename', (req, res) => {
-  const filename = req.params.filename;
-  const filePath = path.join(__dirname, 'uploads', filename);
+  const { filename } = req.params;
+  const filePath = path.join(uploadDir, filename);
   res.download(filePath);
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+const PORT = 3001;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
