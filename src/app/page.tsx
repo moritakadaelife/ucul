@@ -33,21 +33,28 @@ export default function Home() {
         body: formData,
       });
 
-      const data = await response.json();
+      const text = await response.text();
 
-      if (response.ok) {
-        setUploadedFiles((prev) => [
-          ...prev,
-          ...data.files.map((file: { filename: string; originalname: string }) => ({
-            filename: file.filename,
-            originalname: file.originalname,
-            status: "processing",
-          })),
-        ]);
+      try {
+        const data = JSON.parse(text);
 
-        checkFileStatus(data.files.map((file: { filename: string }) => file.filename));
-      } else {
-        console.error(data.message);
+        if (response.ok) {
+          setUploadedFiles((prev) => [
+            ...prev,
+            ...data.files.map((file: { filename: string; originalname: string }) => ({
+              filename: file.filename,
+              originalname: file.originalname,
+              status: "processing",
+            })),
+          ]);
+
+          checkFileStatus(data.files.map((file: { filename: string }) => file.filename));
+        } else {
+          console.error(data.message);
+        }
+      } catch (err) {
+        console.error('Failed to parse JSON response:', err);
+        console.error('Response text:', text);
       }
     } catch (error) {
       console.error("Failed to upload files", error);
