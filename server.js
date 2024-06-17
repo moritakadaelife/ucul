@@ -8,9 +8,8 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS設定
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*', // 許可するオリジンを設定
+  origin: process.env.NEXT_PUBLIC_API_URL || '*',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 }));
@@ -18,7 +17,7 @@ app.use(cors({
 app.use(fileUpload());
 app.use(express.static('uploads'));
 
-app.post('/upload', (req, res) => {
+app.post('/api/upload', (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
   }
@@ -44,7 +43,7 @@ app.post('/upload', (req, res) => {
     });
 });
 
-app.get('/status/:filename', (req, res) => {
+app.get('/api/status/:filename', (req, res) => {
   const { filename } = req.params;
   const filePath = path.join(__dirname, 'uploads', filename);
 
@@ -55,7 +54,7 @@ app.get('/status/:filename', (req, res) => {
   res.json({ status: 'completed', originalname: filename });
 });
 
-app.get('/download/:filename', (req, res) => {
+app.get('/api/download/:filename', (req, res) => {
   const { filename } = req.params;
   const filePath = path.join(__dirname, 'uploads', filename);
 
