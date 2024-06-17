@@ -30,9 +30,6 @@ export default function Home() {
     try {
       const response = await fetch("http://localhost:3001/upload", {
         method: "POST",
-        headers: {
-          'api-key': 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj'
-        },
         body: formData,
       });
 
@@ -61,11 +58,7 @@ export default function Home() {
     for (const filename of filenames) {
       const interval = setInterval(async () => {
         try {
-          const response = await fetch(`http://localhost:3001/status/${filename}`, {
-            headers: {
-              'api-key': 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj'
-            },
-          });
+          const response = await fetch(`http://localhost:3001/status/${filename}`);
           if (response.ok) {
             const data = await response.json();
             if (data.status === "completed") {
@@ -77,7 +70,7 @@ export default function Home() {
                     : file
                 )
               );
-              setInputKey(Date.now());
+              setInputKey(Date.now()); // Reset file input
             }
           } else if (response.status === 404) {
             clearInterval(interval);
@@ -89,7 +82,7 @@ export default function Home() {
           clearInterval(interval);
           console.error(`Error fetching status for ${filename}: ${(error as Error).message}`);
         }
-      }, 5000);
+      }, 5000); // Check status every 5 seconds
     }
   };
 
