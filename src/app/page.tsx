@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -28,8 +28,11 @@ export default function Home() {
     });
 
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/upload", {
+      const response = await fetch("http://localhost:3001/upload", {
         method: "POST",
+        headers: {
+          'api-key': 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj'
+        },
         body: formData,
       });
 
@@ -58,7 +61,11 @@ export default function Home() {
     for (const filename of filenames) {
       const interval = setInterval(async () => {
         try {
-          const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/status/${filename}`);
+          const response = await fetch(`http://localhost:3001/status/${filename}`, {
+            headers: {
+              'api-key': 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj'
+            },
+          });
           if (response.ok) {
             const data = await response.json();
             if (data.status === "completed") {
@@ -70,7 +77,7 @@ export default function Home() {
                     : file
                 )
               );
-              setInputKey(Date.now()); // Reset file input
+              setInputKey(Date.now());
             }
           } else if (response.status === 404) {
             clearInterval(interval);
@@ -82,7 +89,7 @@ export default function Home() {
           clearInterval(interval);
           console.error(`Error fetching status for ${filename}: ${(error as Error).message}`);
         }
-      }, 5000); // Check status every 5 seconds
+      }, 5000);
     }
   };
 
@@ -126,7 +133,7 @@ export default function Home() {
                         <span>{file.originalname}</span>
                         <Button
                           onClick={() =>
-                            (window.location.href = process.env.NEXT_PUBLIC_API_URL + `/download/${file.filename}`)
+                            (window.location.href = `http://localhost:3001/download/${file.filename}`)
                           }
                           disabled={file.status !== "completed"}
                         >
