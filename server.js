@@ -8,16 +8,11 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS設定
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*', // 許可するオリジンを設定
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
-}));
-
+app.use(cors());
 app.use(fileUpload());
 app.use(express.static('uploads'));
 
+// ファイルのアップロードエンドポイント
 app.post('/upload', (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
@@ -44,6 +39,7 @@ app.post('/upload', (req, res) => {
     });
 });
 
+// ファイルのステータス確認エンドポイント
 app.get('/status/:filename', (req, res) => {
   const { filename } = req.params;
   const filePath = path.join(__dirname, 'uploads', filename);
@@ -55,6 +51,7 @@ app.get('/status/:filename', (req, res) => {
   res.json({ status: 'completed', originalname: filename });
 });
 
+// ファイルのダウンロードエンドポイント
 app.get('/download/:filename', (req, res) => {
   const { filename } = req.params;
   const filePath = path.join(__dirname, 'uploads', filename);
