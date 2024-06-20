@@ -75,7 +75,7 @@
 
 .ucul-section__upload-file-label {
   margin: auto;
-  display: block;
+  display: inline-block;
 }
 
 .ucul-section__upload-file-input {
