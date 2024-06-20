@@ -32,25 +32,23 @@
 }
 
 .ucul-project-nav-list {
-  padding: 0 var(--ucul-gap--d);
   display: flex;
   justify-content: flex-start;
   background-color: rgb(200, 200, 200);
 }
 
 .ucul-project-nav-list__item {
-  padding: calc(var(--ucul-gap--d) / 2);
-  border: 1px solid rgb(230, 230, 230);
+  padding: calc(var(--ucul-gap--d) / 3) var(--ucul-gap--d);
+  border: 1px solid rgb(240, 240, 240);
   border-bottom: none;
-  border-radius: 10px 10px 0 0;
-  background-color: rgb(220, 220, 220);
+  color: rgb(240, 240, 240);
   cursor: pointer;
   user-select: none;
 }
 
 .ucul-project-nav-list__item.is-active {
-  border: 1px solid rgb(240, 240, 240);
-  border-bottom: none;
+  color: black;
+  font-weight: 600;
   background-color: rgb(240, 240, 240);
 }
 
