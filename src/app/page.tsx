@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
-import ProjectNav from './components/ProjectNav';
 
 interface UploadedFile {
   filename: string;
@@ -18,6 +17,37 @@ export default function Home() {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [inputKey, setInputKey] = useState(Date.now());
+  const [projects, setProjects] = useState<{ [key: string]: {} }>({});
+  const [activeProject, setActiveProject] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('/api/projects');
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        const data = await response.json();
+        if (!data || Object.keys(data).length === 0) {
+          throw new Error('No projects found');
+        }
+        setProjects(data);
+        const firstProject = Object.keys(data)[0];
+        setActiveProject(firstProject);
+      } catch (error: any) {
+        setError(error.message);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  const handleTabClick = (project: string) => {
+    if (activeProject !== project) {
+      setActiveProject(project);
+    }
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
@@ -87,11 +117,29 @@ export default function Home() {
     }
   };
 
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <>
       <div className="ucul">
         <Header />
-        <ProjectNav />
+        <nav className="ucul-project-nav">
+          <ul className="ucul-project-nav-list">
+            {Object.keys(projects).map((project) => (
+              <li
+                key={project}
+                className={`ucul-project-nav-list__item ${
+                  activeProject === project ? 'is-active' : ''
+                }`}
+                onClick={() => handleTabClick(project)}
+              >
+                {project}
+              </li>
+            ))}
+          </ul>
+        </nav>
         <main className="ucul-main">
           <section className="ucul-section__upload-file">
             <h2 className="ucul-section__upload-file-title">検閲データ（CSVファイルのみ）</h2>
