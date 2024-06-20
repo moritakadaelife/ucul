@@ -19,7 +19,7 @@ export default function ProjectNav() {
         setProjects(data);
         const firstProject = Object.keys(data)[0];
         setActiveProject(firstProject);
-      } catch (error) {
+      } catch (error: any) {
         setError(error.message);
       }
     };
@@ -28,9 +28,9 @@ export default function ProjectNav() {
   }, []);
 
   const handleTabClick = (project: string) => {
-    setActiveProject((prevActiveProject) =>
-      prevActiveProject === project ? null : project
-    );
+    if (activeProject !== project) {
+      setActiveProject(project);
+    }
   };
 
   if (error) {
