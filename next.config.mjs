@@ -1,12 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // 他の設定
-  serverRuntimeConfig: {
 
+  serverRuntimeConfig: {
     projects: {
-      MUJI: {},
-      Unicharm: {},
+      MUJI: {
+        endpoint: 'https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com/api/upload',
+      },
+      Unicharm: {
+        endpoint: 'https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com/api/upload',
+      },
     },
   },
 };
