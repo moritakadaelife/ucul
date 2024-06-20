@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import ProjectNav from './components/ProjectNav';
 
 interface UploadedFile {
   filename: string;
@@ -90,9 +91,10 @@ export default function Home() {
     <>
       <div className="ucul">
         <Header />
+        <ProjectNav />
         <main className="ucul-main">
           <section className="ucul-section__upload-file">
-            <h2 className="ucul-section__upload-file-title">検閲データ</h2>
+            <h2 className="ucul-section__upload-file-title">検閲データ（CSVファイルのみ）</h2>
             <Label className="ucul-section__upload-file-label">
               <Input
                 key={inputKey}

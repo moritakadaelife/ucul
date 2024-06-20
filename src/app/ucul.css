@@ -8,22 +8,6 @@
   --font-size-xs: 14px;
 }
 
-.loading span {
-  animation: blink 100ms infinite;
-}
-
-.loading span:nth-of-type(1) {
-  animation-delay: 0s;
-}
-
-.loading span:nth-of-type(2) {
-  animation-delay: 0.25s;
-}
-
-.loading span:nth-of-type(3) {
-  animation-delay: 0.5s;
-}
-
 .ucul {
   display: flex;
   flex-direction: column;
@@ -32,7 +16,7 @@
 
 .ucul-header {
   padding: var(--ucul-gap--d);
-  background-color: rgb(220, 220, 220);
+  background-color: rgb(200, 200, 200);
 }
 
 .ucul-header h1 {
@@ -43,7 +27,30 @@
   margin-top: auto;
   padding: var(--ucul-gap--d);
   text-align: center;
+  font-size: 12px;
+  background-color: rgb(200, 200, 200);
+}
+
+.ucul-project-nav-list {
+  padding: 0 var(--ucul-gap--d);
+  display: flex;
+  justify-content: flex-start;
+  background-color: rgb(200, 200, 200);
+}
+
+.ucul-project-nav-list__item {
+  padding: calc(var(--ucul-gap--d) / 2);
+  border-top: 1px solid rgb(230, 230, 230);
+  border-right: 1px solid rgb(230, 230, 230);
+  border-left: 1px solid rgb(230, 230, 230);
+  border-radius: 10px 10px 0 0;
   background-color: rgb(220, 220, 220);
+  cursor: pointer;
+}
+
+.ucul-project-nav-list__item.is-active {
+  background-color: rgb(240, 240, 240);
+  cursor: default;
 }
 
 .ucul-main {
@@ -53,6 +60,7 @@
 }
 
 .ucul-main h2 {
+  margin-bottom: calc(var(--ucul-gap--d) / 3);
   font-size: var(--font-size-s);
   font-weight: 600;
 }
