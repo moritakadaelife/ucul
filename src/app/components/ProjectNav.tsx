@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 export default function ProjectNav() {
   const [projects, setProjects] = useState<{ [key: string]: {} }>({});
+  const [activeProject, setActiveProject] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -16,6 +17,8 @@ export default function ProjectNav() {
           throw new Error('No projects found');
         }
         setProjects(data);
+        const firstProject = Object.keys(data)[0];
+        setActiveProject(firstProject);
       } catch (error) {
         setError(error.message);
       }
@@ -23,6 +26,12 @@ export default function ProjectNav() {
 
     fetchProjects();
   }, []);
+
+  const handleTabClick = (project: string) => {
+    setActiveProject((prevActiveProject) =>
+      prevActiveProject === project ? null : project
+    );
+  };
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -32,7 +41,13 @@ export default function ProjectNav() {
     <nav className="ucul-project-nav">
       <ul className="ucul-project-nav-list">
         {Object.keys(projects).map((project) => (
-          <li key={project} className="ucul-project-nav-list__item">
+          <li
+            key={project}
+            className={`ucul-project-nav-list__item ${
+              activeProject === project ? 'is-active' : ''
+            }`}
+            onClick={() => handleTabClick(project)}
+          >
             {project}
           </li>
         ))}
