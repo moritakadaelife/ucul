@@ -17,14 +17,14 @@ export default function Home() {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [inputKey, setInputKey] = useState(Date.now());
-  const [projects, setProjects] = useState<{ [key: string]: {} }>({});
+  const [projects, setProjects] = useState<{ [key: string]: { endpoint: string } }>({});
   const [activeProject, setActiveProject] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/projects');
+        const response = await fetch('/api/projects/');
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
@@ -54,34 +54,43 @@ export default function Home() {
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     const formData = new FormData();
+    formData.append("activeProject", activeProject!);  // activeProject を追加
     Array.from(selectedFiles).forEach((file) => {
       formData.append("files", file);
     });
 
     try {
-      const response = await fetch("http://localhost:3001/upload", {
+      const uploadResponse = await fetch('/api/projects', {
         method: "POST",
         body: formData,
       });
 
-      const data = await response.json();
+      if (uploadResponse.ok) {
+        const data = await uploadResponse.json();
 
-      if (response.ok) {
-        setUploadedFiles((prev) => [
-          ...prev,
-          ...data.files.map((file: { filename: string; originalname: string }) => ({
-            filename: file.filename,
-            originalname: file.originalname,
-            status: "processing",
-          })),
-        ]);
-
-        checkFileStatus(data.files.map((file: { filename: string }) => file.filename));
+        if (data.files) {
+          setUploadedFiles((prev) => [
+            ...prev,
+            ...data.files.map((file: { filename: string; originalname: string }) => ({
+              filename: file.filename,
+              originalname: file.originalname,
+              status: "processing",
+            })),
+          ]);
+          checkFileStatus(data.files.map((file: { filename: string }) => file.filename));
+        } else {
+          console.error('No files found in response data:', data);
+          // エラー処理を行うか、必要に応じてデフォルトのエラーメッセージを設定します。
+          setError('No files found in response data');
+        }
       } else {
-        console.error(data.message);
+        const errorData = await uploadResponse.json();
+        console.error("Failed to upload files", errorData);
+        setError(errorData.error ?? "Unknown error occurred");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to upload files", error);
+      setError(error.message ?? "Unknown error occurred");
     }
   };
 

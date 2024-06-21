@@ -4,6 +4,7 @@ node_modules
 
 # misc
 .DS_Store
+map.txt
 directory_map.txt
 src/directory_map.txt
 
