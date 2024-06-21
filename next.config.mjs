@@ -6,12 +6,12 @@ const nextConfig = {
 
     projects: {
 
-      MUJI: {
+      "MUJI": {
         ENDPOINT: process.env.MUJI_ENDPOINT,
         API_KEY: process.env.MUJI_API_KEY,
       },
 
-      Unicharm: {
+      "ユニチャーム": {
         ENDPOINT: process.env.UNICHARM_ENDPOINT,
         API_KEY: process.env.UNICHARM_API_KEY,
       },
