@@ -17,7 +17,7 @@ export default function Home() {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [inputKey, setInputKey] = useState(Date.now());
-  const [projects, setProjects] = useState<{ [key: string]: { endpoint: string } }>({});
+  const [projects, setProjects] = useState<{ [key: string]: { endpoint: string; apiKey: string } }>({});
   const [activeProject, setActiveProject] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,14 +54,19 @@ export default function Home() {
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     const formData = new FormData();
-    formData.append("activeProject", activeProject!);  // activeProject を追加
     Array.from(selectedFiles).forEach((file) => {
       formData.append("files", file);
     });
 
     try {
-      const uploadResponse = await fetch('/api/projects/upload', {
+      if (!activeProject) throw new Error('No active project selected');
+      const { endpoint, apiKey } = projects[activeProject];
+
+      const uploadResponse = await fetch(endpoint, {
         method: "POST",
+        headers: {
+          'API-Key': apiKey,
+        },
         body: formData,
       });
 
