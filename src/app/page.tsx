@@ -158,14 +158,14 @@ export default function Home() {
 
   return (
     <>
-      <div className="ucul">
+      <div className="elads">
         <Header />
-        <nav className="ucul-project-nav">
-          <ul className="ucul-project-nav-list">
+        <nav className="elads-project-nav">
+          <ul className="elads-project-nav-list">
             {Object.keys(projects).map((project) => (
               <li
                 key={project}
-                className={`ucul-project-nav-list__item ${
+                className={`elads-project-nav-list__item ${
                   activeProject === project ? 'is-active' : ''
                 }`}
                 onClick={() => handleTabClick(project)}
@@ -175,23 +175,23 @@ export default function Home() {
             ))}
           </ul>
         </nav>
-        <main className="ucul-main">
-          <section className="ucul-section__upload-file">
-            <h2 className="ucul-section__upload-file-title">検閲データ（CSVファイルのみ）</h2>
-            <Label className="ucul-section__upload-file-label">
+        <main className="elads-main">
+          <section className="elads-section__upload-file">
+            <h2 className="elads-section__upload-file-title">検閲データ（CSVファイルのみ）</h2>
+            <Label className="elads-section__upload-file-label">
               <Input
                 key={inputKey}
                 id="picture"
                 type="file"
                 accept=".csv"
                 multiple
-                className="ucul-section__upload-file-input"
+                className="elads-section__upload-file-input"
                 onChange={handleFileUpload}
               />
             </Label>
           </section>
-          <section className="ucul-section__lists">
-            <table className="ucul-section__lists-table">
+          <section className="elads-section__lists">
+            <table className="elads-section__lists-table">
               <thead>
                 <tr>
                   <th>ファイルリスト</th>
@@ -202,12 +202,12 @@ export default function Home() {
                 {uploadedFiles.map((file, index) => (
                   <tr key={index}>
                     <td>
-                      <div className="ucul-section__lists-table-cell-aligner">
+                      <div className="elads-section__lists-table-cell-aligner">
                         <span>{file.originalname}</span>
                       </div>
                     </td>
                     <td>
-                      <div className="ucul-section__lists-table-cell-aligner">
+                      <div className="elads-section__lists-table-cell-aligner">
                         <span>{file.originalname}</span>
                         <Button
                           onClick={() => handleDownload(file.filename)} // ダウンロードハンドラを呼び出し
