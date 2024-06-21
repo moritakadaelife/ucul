@@ -26,17 +26,14 @@ export async function POST(request: NextRequest) {
 
     const { ENDPOINT, API_KEY } = serverRuntimeConfig.projects[activeProject];
 
-    const uploadFormData = new FormData();
-    files.forEach((file: any) => {
-      uploadFormData.append('files', file);
-    });
-
+    // Adjust this logic based on your server-side configuration
+    // Ensure the server endpoint allows POST requests for file uploads
     const res = await fetch(ENDPOINT, {
       method: 'POST',
       headers: {
         'API-Key': API_KEY,
       },
-      body: uploadFormData,
+      body: formData, // Directly send formData
     });
 
     const data = await res.json();
