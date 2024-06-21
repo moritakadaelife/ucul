@@ -62,7 +62,7 @@ export default function Home() {
       if (!activeProject) throw new Error('No active project selected');
       const projectData = projects[activeProject];
       if (!projectData || !projectData.endpoint) {
-        throw new Error('Endpoint not found for active project');
+        throw new Error(`Endpoint not found for project: ${activeProject}`);
       }
 
       const { endpoint, apiKey } = projectData;
