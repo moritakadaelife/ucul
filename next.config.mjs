@@ -7,13 +7,13 @@ const nextConfig = {
     projects: {
 
       MUJI: {
-        ENDPOINT: 'https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com/api/upload',
-        API_KEY: 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj',
+        ENDPOINT: process.env.MUJI_ENDPOINT,
+        API_KEY: process.env.MUJI_API_KEY,
       },
 
       Unicharm: {
-        ENDPOINT: 'https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com/api/upload',
-        API_KEY: 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj',
+        ENDPOINT: process.env.UNICHARM_ENDPOINT,
+        API_KEY: process.env.UNICHARM_API_KEY,
       },
     },
   },

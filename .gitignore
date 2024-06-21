@@ -1,5 +1,6 @@
 # dependencies
 .next
+.env.local
 node_modules
 
 # misc
