@@ -60,7 +60,12 @@ export default function Home() {
 
     try {
       if (!activeProject) throw new Error('No active project selected');
-      const { endpoint, apiKey } = projects[activeProject];
+      const projectData = projects[activeProject];
+      if (!projectData || !projectData.endpoint) {
+        throw new Error('Endpoint not found for active project');
+      }
+
+      const { endpoint, apiKey } = projectData;
 
       const uploadResponse = await fetch(endpoint, {
         method: "POST",
