@@ -24,7 +24,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/projects/');
+        const response = await fetch('/api/projects');
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
@@ -60,29 +60,24 @@ export default function Home() {
     });
 
     try {
-      const uploadResponse = await fetch('/api/projects', {
+      const uploadResponse = await fetch('/api/projects/upload', {
         method: "POST",
         body: formData,
       });
 
       if (uploadResponse.ok) {
         const data = await uploadResponse.json();
+        console.log(data); // API レスポンスをコンソールに出力
+        setUploadedFiles((prev) => [
+          ...prev,
+          ...data.files.map((file: { filename: string; originalname: string }) => ({
+            filename: file.filename,
+            originalname: file.originalname,
+            status: "processing",
+          })),
+        ]);
 
-        if (data.files) {
-          setUploadedFiles((prev) => [
-            ...prev,
-            ...data.files.map((file: { filename: string; originalname: string }) => ({
-              filename: file.filename,
-              originalname: file.originalname,
-              status: "processing",
-            })),
-          ]);
-          checkFileStatus(data.files.map((file: { filename: string }) => file.filename));
-        } else {
-          console.error('No files found in response data:', data);
-          // エラー処理を行うか、必要に応じてデフォルトのエラーメッセージを設定します。
-          setError('No files found in response data');
-        }
+        checkFileStatus(data.files.map((file: { filename: string }) => file.filename));
       } else {
         const errorData = await uploadResponse.json();
         console.error("Failed to upload files", errorData);
@@ -98,7 +93,7 @@ export default function Home() {
     for (const filename of filenames) {
       const interval = setInterval(async () => {
         try {
-          const response = await fetch(`http://localhost:3001/status/${filename}`);
+          const response = await fetch(`/api/projects/status/${filename}`);
           if (response.ok) {
             const data = await response.json();
             if (data.status === "completed") {
@@ -123,6 +118,27 @@ export default function Home() {
           console.error(`Error fetching status for ${filename}: ${(error as Error).message}`);
         }
       }, 5000); // Check status every 5 seconds
+    }
+  };
+
+  const handleDownload = async (filename: string) => {
+    try {
+      const downloadResponse = await fetch(`/api/projects/download/${filename}`);
+      if (downloadResponse.ok) {
+        const blob = await downloadResponse.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        console.error(`Failed to download file ${filename}`);
+      }
+    } catch (error) {
+      console.error(`Error downloading file ${filename}: ${(error as Error).message}`);
     }
   };
 
@@ -184,9 +200,7 @@ export default function Home() {
                       <div className="ucul-section__lists-table-cell-aligner">
                         <span>{file.originalname}</span>
                         <Button
-                          onClick={() =>
-                            (window.location.href = `http://localhost:3001/download/${file.filename}`)
-                          }
+                          onClick={() => handleDownload(file.filename)} // ダウンロードハンドラを呼び出し
                           disabled={file.status !== "completed"}
                         >
                           Download
