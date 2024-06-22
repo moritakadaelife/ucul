@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import axios from 'axios';
 
@@ -19,9 +19,36 @@ export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
   const [responseData, setResponseData] = useState<ResponseData | null>(null);
+  const [activeProject, setActiveProject] = useState<string | null>(null);
   const [fileList, setFileList] = useState<{ name: string; requestId: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [projects, setProjects] = useState<{ [key: string]: { endpoint: string; apiKey: string } }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch projects on component mount
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('/api/projects');
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        console.log(response);
+        const data = await response.json();
+        if (!data || Object.keys(data).length === 0) {
+          throw new Error('No projects found');
+        }
+        setProjects(data);
+        const firstProject = Object.keys(data)[0];
+        setActiveProject(firstProject);
+      } catch (error: any) {
+        setError(error.message);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFile(event.target.files?.[0] || null);
@@ -103,18 +130,30 @@ export default function Home() {
     }
   };
 
+  // Function to handle project tab click
+  const handleTabClick = (project: string) => {
+    if (activeProject !== project) {
+      setActiveProject(project);
+    }
+  };
+
   return (
     <>
       <div className="elads">
         <Header />
         <nav className="elads-project-nav">
           <ul className="elads-project-nav-list">
-            <li className="elads-project-nav-list__item is-active">
-              MUJI
-            </li>
-            <li className="elads-project-nav-list__item">
-              ユニチャーム
-            </li>
+            {Object.keys(projects).map((project) => (
+              <li
+                key={project}
+                className={`elads-project-nav-list__item ${
+                  activeProject === project ? 'is-active' : ''
+                }`}
+                onClick={() => handleTabClick(project)}
+              >
+                {project}
+              </li>
+            ))}
           </ul>
         </nav>
         <main className="elads-main">
