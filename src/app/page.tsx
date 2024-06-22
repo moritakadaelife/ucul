@@ -1,188 +1,6 @@
 "use client";
 
-// import { useState, useEffect, useRef } from "react";
-
-// interface UploadResponse {
-//   created_at: string;
-//   request_id: string;
-//   client_id: string;
-//   row_count: number;
-//   chunk_size: number;
-// }
-
-// interface UploadedFile {
-//   filename: string;
-//   originalname: string;
-//   status: string;
-// }
-
-// export default function Home() {
-//   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-//   const [inputKey, setInputKey] = useState(Date.now());
-//   const [projects, setProjects] = useState<{ [key: string]: { endpoint: string; apiKey: string } }>({});
-//   const [activeProject, setActiveProject] = useState<string | null>(null);
-//   const [error, setError] = useState<string | null>(null);
-//   const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input
-
-//   // Fetch projects on component mount
-//   useEffect(() => {
-//     const fetchProjects = async () => {
-//       try {
-//         const response = await fetch('/api/projects');
-//         if (!response.ok) {
-//           throw new Error(`Error: ${response.statusText}`);
-//         }
-//         const data = await response.json();
-//         if (!data || Object.keys(data).length === 0) {
-//           throw new Error('No projects found');
-//         }
-//         setProjects(data);
-//         const firstProject = Object.keys(data)[0];
-//         setActiveProject(firstProject);
-//       } catch (error: any) {
-//         setError(error.message);
-//       }
-//     };
-
-//     fetchProjects();
-//   }, []);
-
-//   // Function to handle file upload
-//   const handleFileUpload = async () => {
-
-//     try {
-
-//       if (!activeProject || !projects[activeProject]) {
-//         throw new Error('Active project configuration not found');
-//       }
-
-//       const { endpoint, apiKey } = projects[activeProject];
-
-//       if (!fileInputRef.current?.files?.length) {
-//         throw new Error('Please select a file to upload');
-//       }
-
-//       const formData = new FormData();
-//       formData.append('files', fileInputRef.current!.files![0]);
-
-//       const response = await fetch(endpoint, {
-//         method: 'POST',
-//         headers: {
-//           'X-API-Key': apiKey,
-//         },
-//         body: formData,
-//       });
-
-//       if (!response.ok) {
-//         throw new Error(`Upload failed with status: ${response.status}`);
-//       }
-
-//       const data: UploadResponse = await response.json();
-//       console.log(data); // Log the response
-
-//       // Update uploaded files state
-//       setUploadedFiles(prevFiles => [
-//         ...prevFiles,
-//         {
-//           filename: data.request_id,
-//           originalname: fileInputRef.current!.files![0].name,
-//           status: 'Uploaded',
-//         },
-//       ]);
-
-//       // Reset file input
-//       setInputKey(Date.now());
-//     } catch (error) {
-//       console.error('File upload failed:', error);
-//       setError('File upload failed. Please try again.');
-//     }
-//   };
-
-//   // Function to handle project tab click
-//   const handleTabClick = (project: string) => {
-//     if (activeProject !== project) {
-//       setActiveProject(project);
-//     }
-//   };
-
-//   // Render error if there's an error state
-//   if (error) {
-//     return <div>Error: {error}</div>;
-//   }
-
-//   return (
-//     <>
-//       <div className="elads">
-//         <Header />
-//         <nav className="elads-project-nav">
-//           <ul className="elads-project-nav-list">
-//             {Object.keys(projects).map((project) => (
-//               <li
-//                 key={project}
-//                 className={`elads-project-nav-list__item ${
-//                   activeProject === project ? 'is-active' : ''
-//                 }`}
-//                 onClick={() => handleTabClick(project)}
-//               >
-//                 {project}
-//               </li>
-//             ))}
-//           </ul>
-//         </nav>
-//         <main className="elads-main">
-//           <section className="elads-section__upload-file">
-//             <h2 className="elads-section__upload-file-title">検閲データ（CSVファイルのみ）</h2>
-//             <Label className="elads-section__upload-file-label">
-//               <Input
-//                 key={inputKey}
-//                 id="file-upload"
-//                 type="file"
-//                 accept=".csv"
-//                 ref={fileInputRef}
-//                 multiple
-//                 className="elads-section__upload-file-input"
-//               />
-//             </Label>
-//             <Button className="ml-2" onClick={handleFileUpload}>Upload</Button>
-//           </section>
-//           <section className="elads-section__lists">
-//             <table className="elads-section__lists-table">
-//               <thead>
-//                 <tr>
-//                   <th>ファイルリスト</th>
-//                   <th>ファイルリスト<small>（検閲済み）</small></th>
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {uploadedFiles.map((file, index) => (
-//                   <tr key={index}>
-//                     <td>
-//                       <div className="elads-section__lists-table-cell-aligner">
-//                         <span>{file.originalname}</span>
-//                       </div>
-//                     </td>
-//                     <td>
-//                       <div className="elads-section__lists-table-cell-aligner">
-//                         <span>{file.originalname}</span>
-//                         <Button>
-//                           Download
-//                         </Button>
-//                       </div>
-//                     </td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
-//           </section>
-//         </main>
-//         <Footer />
-//       </div>
-//     </>
-//   );
-// }
-
-
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import axios from 'axios';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -191,16 +9,25 @@ import { Input } from "@/components/ui/input";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 
-export default function Home() {
-  const [file, setFile] = useState(null);
-  const [message, setMessage] = useState('');
-  const [responseData, setResponseData] = useState(null);
+interface ResponseData {
+  request_id: string;
+  // 他のプロパティ
+}
 
-  const handleFileChange = (event: any) => {
-    setFile(event.target.files[0]);
+export default function Home() {
+  const [file, setFile] = useState<File | null>(null);
+  const [message, setMessage] = useState('');
+  const [responseData, setResponseData] = useState<ResponseData | null>(null);
+  const [fileList, setFileList] = useState<{ name: string; requestId: string }[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFile(event.target.files?.[0] || null);
+    setMessage(''); // ファイルが選択されたらメッセージをクリアする
   };
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!file) {
       setMessage('Please select a file first.');
@@ -214,7 +41,8 @@ export default function Home() {
         const base64data = reader.result.split(',')[1];
 
         try {
-          const response = await axios.post(
+          setIsLoading(true);
+          const response = await axios.post<ResponseData>(
             '/api/upload', // ローカルのプロキシ経由でAPIを呼び出す
             base64data,
             {
@@ -226,9 +54,19 @@ export default function Home() {
           );
 
           setMessage('File uploaded successfully');
-          setResponseData(response.data); // 保存レスポンスデータ
+          setResponseData(response.data);
+
+          const requestId = response.data.request_id;
+          setFileList([...fileList, { name: file.name, requestId }]);
+
+          setFile(null);
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
         } catch (error: any) {
           setMessage(`Error uploading file: ${error.message}`);
+        } finally {
+          setIsLoading(false);
         }
       } else {
         setMessage('Error reading file.');
@@ -240,12 +78,34 @@ export default function Home() {
     };
   };
 
+  const handleDownload = async (requestId: string, fileName: string) => {
+    try {
+      const url = `https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com/api/request/${requestId}`;
+      const response = await axios.get(url, {
+        headers: {
+          'X-API-Key': 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj',
+        },
+        responseType: 'blob', // ファイルをblob形式で取得する
+      });
+
+      const blob = new Blob([response.data], { type: 'text/csv' });
+      const urlObject = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = urlObject;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      setMessage('Error downloading file');
+    }
+  };
+
   return (
     <>
       <div className="elads">
         <Header />
-        <nav className="elads-project-nav">
-        </nav>
         <main className="elads-main">
           <section className="elads-section__upload-file">
             <h2 className="elads-section__upload-file-title">検閲データ（CSVファイルのみ）</h2>
@@ -254,21 +114,62 @@ export default function Home() {
                 <Input
                   type="file"
                   accept=".csv"
-                  multiple
                   onChange={handleFileChange}
+                  ref={fileInputRef}
                   className="elads-section__upload-file-input"
                 />
               </Label>
-              <Button type="submit" className="ml-2">Upload</Button>
+              <Button type="submit" className="ml-2 elads-section__upload-file-button">Upload</Button>
             </form>
+            {isLoading && (
+              <div className="elads-section__upload-file-loading">
+                <span>Loading</span>
+                <span className="dot dot-first">.</span>
+                <span className="dot dot-second">.</span>
+                <span className="dot dot-third">.</span>
+              </div>
+            )}
+            {message && !isLoading && (
+              <div className="elads-section__upload-file-message">
+                {message && !isLoading && (
+                  <span className={`${message === 'Please select a file first.' ? 'error' : ''}`}>
+                    {message}
+                  </span>
+                )}
+              </div>
+            )}
           </section>
-          {message && <p>{message}</p>}
-          {responseData && (
-            <div>
-              <h2>Response Data:</h2>
-              <pre>{JSON.stringify(responseData, null, 2)}</pre>
-            </div>
-          )}
+          <section className="elads-section__lists">
+            <table className="elads-section__lists-table">
+              <thead>
+                <tr>
+                  <th>ファイルリスト</th>
+                  <th>ファイルリスト<small>（検閲済み）</small></th>
+                </tr>
+              </thead>
+              <tbody>
+                {fileList.map((fileData, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div className="elads-section__lists-table-cell-aligner">
+                        <span>{fileData.name}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="elads-section__lists-table-cell-aligner">
+                        <span>{fileData.name.replace('.csv', '') + '_' + fileData.requestId + '.csv'}</span>
+                        <Button
+                          onClick={() => handleDownload(fileData.requestId, fileData.name.replace('.csv', '') + '_' + fileData.requestId + '.csv')}
+                        >
+                          Download
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
         </main>
         <Footer />
       </div>

@@ -83,6 +83,14 @@
   cursor: pointer;
 }
 
+.elads-section__upload-file-message {
+  margin-top: 10px;
+}
+
+.elads-section__upload-file-message .error {
+  color: rgb(240, 50, 50);
+}
+
 .elads-section__lists {
   width: 100%;
 }
@@ -136,3 +144,37 @@
   align-items: center;
 }
 
+.elads-section__upload-file-loading {
+  margin-top: 10px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.elads-section__upload-file-loading .dot {
+  animation: dotAnimation 1s infinite;
+  opacity: 0;
+}
+
+.elads-section__upload-file-loading .dot-first {
+  animation-delay: 0;
+}
+
+.elads-section__upload-file-loading .dot-second {
+  animation-delay: 0.5s;
+}
+
+.elads-section__upload-file-loading .dot-third {
+  animation-delay: 1s;
+}
+
+@keyframes dotAnimation {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
