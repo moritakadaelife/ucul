@@ -15,7 +15,7 @@ interface ResponseData {
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState('');
-  const [responseData, setResponseData] = useState<ResponseData | null>(null);
+  const [, setResponseData] = useState<ResponseData | null>(null);
   const [activeProject, setActiveProject] = useState<string | null>(null);
   const [fileList, setFileList] = useState<{ name: string; requestId: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +23,7 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch projects on component mount
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -45,17 +46,20 @@ export default function Home() {
     fetchProjects();
   }, []);
 
+  // Function to handle file upload
   const handleTabClick = (project: string) => {
     if (activeProject !== project) {
       setActiveProject(project);
     }
   };
 
+  // Function to handle file upload
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFile(event.target.files?.[0] || null);
     setMessage('');
   };
 
+  // Function to handle form submit
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!file) {
@@ -70,9 +74,6 @@ export default function Home() {
 
     const selectedProject = projects[activeProject];
     const { ENDPOINT, API_KEY } = selectedProject;
-
-    console.log('selectedProject', selectedProject);
-    console.log(ENDPOINT, API_KEY);
 
     if (!ENDPOINT || !API_KEY) {
       setMessage('Endpoint or API key is missing for the selected project.');
@@ -123,6 +124,7 @@ export default function Home() {
     };
   };
 
+  // Function to handle file download TODO: Implement this function
   const handleDownload = async (requestId: string, fileName: string) => {
     if (!activeProject || !projects[activeProject]) {
       setMessage('Please select a valid project.');
