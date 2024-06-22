@@ -7,7 +7,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
       },
     ];
   },
@@ -15,7 +15,7 @@ const nextConfig = {
   async middleware() {
     return [
       createProxyMiddleware('/api', {
-        target: 'https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com',
+        target: process.env.NEXT_PUBLIC_API_URL,
         changeOrigin: true,
         pathRewrite: {
           '^/api': '',

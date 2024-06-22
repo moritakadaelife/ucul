@@ -143,7 +143,7 @@ export default function Home() {
             {message && !isLoading && (
               <div className="elads-section__upload-file-message">
                 {message && !isLoading && (
-                  <span className={`${message === 'Please select a file first.' ? 'error' : ''}`}>
+                  <span className={`${message === 'Please select a file first.' || message === 'Error downloading file' ? 'error' : ''}`}>
                     {message}
                   </span>
                 )}
