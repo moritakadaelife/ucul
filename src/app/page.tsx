@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useRef } from 'react';
+
 import axios from 'axios';
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface ResponseData {
   request_id: string;
@@ -106,6 +107,16 @@ export default function Home() {
     <>
       <div className="elads">
         <Header />
+        <nav className="elads-project-nav">
+          <ul className="elads-project-nav-list">
+            <li className="elads-project-nav-list__item is-active">
+              MUJI
+            </li>
+            <li className="elads-project-nav-list__item">
+              ユニチャーム
+            </li>
+          </ul>
+        </nav>
         <main className="elads-main">
           <section className="elads-section__upload-file">
             <h2 className="elads-section__upload-file-title">検閲データ（CSVファイルのみ）</h2>
