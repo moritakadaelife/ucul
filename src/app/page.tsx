@@ -1,11 +1,6 @@
 "use client";
 
 // import { useState, useEffect, useRef } from "react";
-// import { Button } from "@/components/ui/button";
-// import { Label } from "@/components/ui/label";
-// import { Input } from "@/components/ui/input";
-// import Header from "@/app/components/Header";
-// import Footer from "@/app/components/Footer";
 
 // interface UploadResponse {
 //   created_at: string;
@@ -189,6 +184,12 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+
+import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 
 export default function Home() {
   const [file, setFile] = useState(null);
@@ -240,19 +241,37 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <h1>File Upload</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="file" onChange={handleFileChange} />
-        <button type="submit">Upload</button>
-      </form>
-      {message && <p>{message}</p>}
-      {responseData && (
-        <div>
-          <h2>Response Data:</h2>
-          <pre>{JSON.stringify(responseData, null, 2)}</pre>
-        </div>
-      )}
-    </div>
+    <>
+      <div className="elads">
+        <Header />
+        <nav className="elads-project-nav">
+        </nav>
+        <main className="elads-main">
+          <section className="elads-section__upload-file">
+            <h2 className="elads-section__upload-file-title">検閲データ（CSVファイルのみ）</h2>
+            <form onSubmit={handleSubmit} className="elads-section__upload-file-form">
+              <Label className="elads-section__upload-file-label">
+                <Input
+                  type="file"
+                  accept=".csv"
+                  multiple
+                  onChange={handleFileChange}
+                  className="elads-section__upload-file-input"
+                />
+              </Label>
+              <Button type="submit" className="ml-2">Upload</Button>
+            </form>
+          </section>
+          {message && <p>{message}</p>}
+          {responseData && (
+            <div>
+              <h2>Response Data:</h2>
+              <pre>{JSON.stringify(responseData, null, 2)}</pre>
+            </div>
+          )}
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 }
