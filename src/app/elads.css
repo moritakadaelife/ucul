@@ -100,6 +100,10 @@
   width: 50%;
 }
 
+.elads-section__lists-table th small {
+  display: inline-block;
+}
+
 .elads-section__lists-table td {
   padding-top: calc(var(--elads-gap--d) / 4);
   padding-right: var(--elads-gap--d);
