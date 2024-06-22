@@ -68,7 +68,12 @@ export default function Home() {
       return;
     }
 
-    const { ENDPOINT, API_KEY } = projects[activeProject];
+    const selectedProject = projects[activeProject];
+    const { ENDPOINT, API_KEY } = selectedProject;
+
+    console.log('selectedProject', selectedProject);
+    console.log(ENDPOINT, API_KEY);
+
     if (!ENDPOINT || !API_KEY) {
       setMessage('Endpoint or API key is missing for the selected project.');
       return;
