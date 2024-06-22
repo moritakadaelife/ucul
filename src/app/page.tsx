@@ -214,7 +214,7 @@ export default function Home() {
 
         try {
           const response = await axios.post(
-            'https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com/api/upload',
+            '/api/upload', // ローカルのプロキシ経由でAPIを呼び出す
             base64data,
             {
               headers: {
