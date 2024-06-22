@@ -193,6 +193,7 @@ import axios from 'axios';
 export default function Home() {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState('');
+  const [responseData, setResponseData] = useState(null);
 
   const handleFileChange = (event: any) => {
     setFile(event.target.files[0]);
@@ -223,7 +224,8 @@ export default function Home() {
             }
           );
 
-          setMessage(`File uploaded successfully: ${response.data}`);
+          setMessage('File uploaded successfully');
+          setResponseData(response.data); // 保存レスポンスデータ
         } catch (error: any) {
           setMessage(`Error uploading file: ${error.message}`);
         }
@@ -245,6 +247,12 @@ export default function Home() {
         <button type="submit">Upload</button>
       </form>
       {message && <p>{message}</p>}
+      {responseData && (
+        <div>
+          <h2>Response Data:</h2>
+          <pre>{JSON.stringify(responseData, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 }
