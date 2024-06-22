@@ -194,11 +194,11 @@ export default function Home() {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState('');
 
-  const handleFileChange = (event) => {
+  const handleFileChange = (event: any) => {
     setFile(event.target.files[0]);
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
     if (!file) {
       setMessage('Please select a file first.');
@@ -208,23 +208,27 @@ export default function Home() {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = async () => {
-      const base64data = reader.result.split(',')[1];
+      if (typeof reader.result === 'string') {
+        const base64data = reader.result.split(',')[1];
 
-      try {
-        const response = await axios.post(
-          'https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com/api/upload',
-          base64data,
-          {
-            headers: {
-              'X-API-Key': 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj',
-              'Content-Type': 'text/plain',
-            },
-          }
-        );
+        try {
+          const response = await axios.post(
+            'https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com/api/upload',
+            base64data,
+            {
+              headers: {
+                'X-API-Key': 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj',
+                'Content-Type': 'text/plain',
+              },
+            }
+          );
 
-        setMessage(`File uploaded successfully: ${response.data}`);
-      } catch (error) {
-        setMessage(`Error uploading file: ${error.message}`);
+          setMessage(`File uploaded successfully: ${response.data}`);
+        } catch (error: any) {
+          setMessage(`Error uploading file: ${error.message}`);
+        }
+      } else {
+        setMessage('Error reading file.');
       }
     };
 
