@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-
 import axios from 'axios';
-
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -12,7 +10,6 @@ import { Input } from "@/components/ui/input";
 
 interface ResponseData {
   request_id: string;
-  // 他のプロパティ
 }
 
 export default function Home() {
@@ -22,11 +19,10 @@ export default function Home() {
   const [activeProject, setActiveProject] = useState<string | null>(null);
   const [fileList, setFileList] = useState<{ name: string; requestId: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [projects, setProjects] = useState<{ [key: string]: { endpoint: string; apiKey: string } }>({});
+  const [projects, setProjects] = useState<{ [key: string]: { ENDPOINT: string; API_KEY: string } }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch projects on component mount
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -34,7 +30,6 @@ export default function Home() {
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
-        console.log(response);
         const data = await response.json();
         if (!data || Object.keys(data).length === 0) {
           throw new Error('No projects found');
@@ -50,15 +45,32 @@ export default function Home() {
     fetchProjects();
   }, []);
 
+  const handleTabClick = (project: string) => {
+    if (activeProject !== project) {
+      setActiveProject(project);
+    }
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFile(event.target.files?.[0] || null);
-    setMessage(''); // ファイルが選択されたらメッセージをクリアする
+    setMessage('');
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!file) {
       setMessage('Please select a file first.');
+      return;
+    }
+
+    if (!activeProject || !projects[activeProject]) {
+      setMessage('Please select a valid project.');
+      return;
+    }
+
+    const { ENDPOINT, API_KEY } = projects[activeProject];
+    if (!ENDPOINT || !API_KEY) {
+      setMessage('Endpoint or API key is missing for the selected project.');
       return;
     }
 
@@ -71,11 +83,11 @@ export default function Home() {
         try {
           setIsLoading(true);
           const response = await axios.post<ResponseData>(
-            '/api/upload', // ローカルのプロキシ経由でAPIを呼び出す
+            '/api/upload',
             base64data,
             {
               headers: {
-                'X-API-Key': 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj',
+                'X-API-Key': API_KEY,
                 'Content-Type': 'text/plain',
               },
             }
@@ -107,11 +119,17 @@ export default function Home() {
   };
 
   const handleDownload = async (requestId: string, fileName: string) => {
+    if (!activeProject || !projects[activeProject]) {
+      setMessage('Please select a valid project.');
+      return;
+    }
+
+    const { ENDPOINT, API_KEY } = projects[activeProject];
     try {
-      const url = `https://cd2g26sz16.execute-api.ap-northeast-1.amazonaws.com/api/request/${requestId}`;
+      const url = `${ENDPOINT}/${requestId}`;
       const response = await axios.get(url, {
         headers: {
-          'X-API-Key': 'Fc7lslJVkP6Xr9dbkolZcPICL91IIMA6txhPg5Aj',
+          'X-API-Key': API_KEY,
         },
         responseType: 'blob', // ファイルをblob形式で取得する
       });
@@ -127,13 +145,6 @@ export default function Home() {
     } catch (error) {
       console.error('Error downloading file:', error);
       setMessage('Error downloading file');
-    }
-  };
-
-  // Function to handle project tab click
-  const handleTabClick = (project: string) => {
-    if (activeProject !== project) {
-      setActiveProject(project);
     }
   };
 
